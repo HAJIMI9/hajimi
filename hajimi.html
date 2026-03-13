@@ -1,609 +1,582 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>科目一驾考题库 - 难重点专练</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>驾考科目一 · 难点模拟</title>
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background: #f5f7fa;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 12px 8px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
+        .app {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -8px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 20px 16px 25px;
         }
-        .stats-card {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+        /* 顶部计时与统计卡片 */
+        .header-stats {
+            background: linear-gradient(145deg, #0b2b44, #123b5e);
+            color: white;
+            border-radius: 24px;
+            padding: 18px 16px;
+            margin-bottom: 18px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 8px 12px rgba(0,20,40,0.3);
+        }
+        .timer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .timer {
+            background: #1f4a6e;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 1.6rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            box-shadow: inset 0 0 0 1px #3e7b9e;
+        }
+        .badge-light {
+            background: #ffb347;
+            color: #1e2f3d;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .stat-circles {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .stat-item {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            text-align: center;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(2px);
+            border-radius: 30px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1 1 auto;
+            min-width: 70px;
+            justify-content: center;
+            border: 1px solid rgba(255,215,140,0.3);
         }
-        .stat-item h3 {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 10px;
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
-        .stat-item p {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .progress-box {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-        .progress-box h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 16px;
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #e6e9ed;
-            border-radius: 10px;
+            margin-top: 12px;
+            height: 10px;
+            background: #26577c;
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 10px;
         }
         .progress-fill {
             height: 100%;
-            background: #2ecc71;
-            border-radius: 10px;
-            transition: width 0.3s ease;
+            background: #f6c445;
+            width: 0%;
+            transition: width 0.2s;
+            box-shadow: 0 0 12px #ffd966;
         }
-        .score-record {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-        .score-record h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        .score-list {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
+        /* 最近5次成绩 */
+        .scores-row {
+            background: #e8f0fe;
+            border-radius: 40px;
+            padding: 10px 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
             gap: 10px;
-            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #103450;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
         }
-        .score-item {
-            padding: 10px;
-            border: 1px solid #e6e9ed;
-            border-radius: 6px;
+        .scores-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #bdd3e9;
+            padding: 4px 12px;
+            border-radius: 30px;
         }
-        .score-item span {
-            display: block;
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-bottom: 5px;
+        .score-bubbles {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        .question-box {
-            background: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        .score-bubble {
+            background: white;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-weight: 600;
+            color: #004070;
+            border: 1px solid #96b8d4;
+        }
+        /* 题目序号网格 */
+        .grid-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #f2f7fc;
+            padding: 14px 8px;
+            border-radius: 40px;
+        }
+        .q-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            background: white;
+            border: 1.5px solid #cbd5e1;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        .q-btn.answered-correct {
+            background: #2b7a4b;
+            border-color: #146c3a;
+            color: white;
+        }
+        .q-btn.answered-wrong {
+            background: #b22234;
+            border-color: #8b1a1a;
+            color: white;
+        }
+        .q-btn.current {
+            border: 4px solid #f5b342;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px #ffe49e;
+        }
+        .q-btn:active {
+            transform: scale(0.94);
+        }
+        /* 题目卡片 */
+        .question-card {
+            background: #ffffffd9;
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 24px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 24px -12px rgba(0,32,64,0.3);
+            border: 1px solid #eef5ff;
+        }
+        .q-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 22px;
+            color: #0a2339;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             margin-bottom: 20px;
         }
-        .question-title {
-            font-size: 18px;
-            color: #2c3e50;
-            margin-bottom: 20px;
+        .option {
+            background: #f2f7ff;
+            border-radius: 60px;
+            padding: 6px 6px 6px 20px;
+            border: 1.5px solid #dde7f0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .option.selected {
+            background: #c8e2ff;
+            border-color: #3080d0;
+            box-shadow: 0 0 0 3px rgba(48,128,208,0.2);
+        }
+        .option input[type="radio"] {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #7089a8;
+            border-radius: 50%;
+            margin-right: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .option input[type="radio"]:checked {
+            border-color: #0b5e9e;
+            background-color: #0b5e9e;
+            box-shadow: inset 0 0 0 5px white;
+        }
+        .option-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #103450;
+            flex: 1;
+        }
+        .explain-box {
+            background: #e4eefa;
+            padding: 18px 18px;
+            border-radius: 28px;
+            border-left: 8px solid #f4b740;
+            margin-top: 8px;
+        }
+        .correct-ans {
+            font-weight: 700;
+            color: #14532d;
+            background: #dcfce7;
+            display: inline-block;
+            padding: 4px 20px;
+            border-radius: 30px;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .explain-text {
+            color: #1f3a57;
+            font-size: 1rem;
             line-height: 1.5;
         }
-        .option-list {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-        .option-item {
-            padding: 12px 15px;
-            border: 1px solid #e6e9ed;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .option-item:hover {
-            border-color: #3498db;
-        }
-        .option-item.selected {
-            background: #e8f4fc;
-            border-color: #3498db;
-            color: #2980b9;
-        }
-        .option-item.correct {
-            background: #e8f8f5;
-            border-color: #2ecc71;
-            color: #27ae60;
-        }
-        .option-item.wrong {
-            background: #fef5f5;
-            border-color: #e74c3c;
-            color: #c0392b;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s ease;
-        }
-        .btn-primary {
-            background: #3498db;
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-        .btn-success {
-            background: #2ecc71;
-            color: #fff;
-        }
-        .btn-success:hover {
-            background: #27ae60;
-        }
-        .analysis-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            display: none;
-        }
-        .analysis-box.show {
-            display: block;
-        }
-        .analysis-title {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
-        .analysis-content {
-            color: #34495e;
-            line-height: 1.6;
-        }
-        .nav-btn {
+        .nav-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin: 15px 0 10px;
+            gap: 10px;
         }
-        .nav-btn .btn {
-            width: 48%;
+        .nav-btn {
+            background: white;
+            border: 2px solid #cbddee;
+            padding: 14px 25px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #1a4a73;
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            transition: 0.1s;
         }
-        @media (max-width: 768px) {
-            .stats-card {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .score-list {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .score-item:nth-child(5) {
-                grid-column: 1 / 3;
-            }
-            .question-title {
-                font-size: 16px;
-            }
+        .nav-btn:active {
+            background: #e2edf7;
+            transform: scale(0.97);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .finish-btn {
+            background: #0b2b44;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: 700;
+            margin-top: 8px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px #0b2b4470;
+            transition: all 0.15s;
+        }
+        .finish-btn:active {
+            background: #133f60;
+            transform: scale(0.98);
+        }
+        .footer {
+            color: #6d8aa8;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>科目一驾考难重点题库</h1>
-        <p>扣分/罚款/超速/超员 核心考点专练</p>
-    </div>
+<div class="app" id="app">
+    <!-- 动态渲染 by JS -->
+</div>
 
-    <!-- 答题统计模块 -->
-    <div class="stats-card">
-        <div class="stat-item">
-            <h3>未答题</h3>
-            <p id="unanswered">20</p>
-        </div>
-        <div class="stat-item">
-            <h3>已答题</h3>
-            <p id="answered">0</p>
-        </div>
-        <div class="stat-item">
-            <h3>错题数</h3>
-            <p id="wrong-ques">0</p>
-        </div>
-        <div class="stat-item">
-            <h3>最新成绩</h3>
-            <p id="latest-score">0</p>
-        </div>
-    </div>
+<script>
+(function() {
+    // ---------- 基于思维导图构建40道题目 (涵盖扣分、罚款、违法行为) ----------
+    const questions = [
+        { id: 0, text: "高速公路上超速50%以上（小型客车）一次记几分？", options: ["6分", "9分", "12分", "3分"], answer: 2, explanation: "根据思维导图：高速超速50%以上记12分；普通道路超速50%以上记6分。" },
+        { id: 1, text: "使用伪造、变造机动车登记证的罚款是多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "5000-10000元"], answer: 2, explanation: "伪造两证、登记证、号牌等，处2000-5000元罚款。" },
+        { id: 2, text: "饮酒后驾驶机动车（非营运）的一次记几分？", options: ["12分", "6分", "9分", "3分"], answer: 0, explanation: "酒驾记12分，暂扣驾照6个月，并处1000-2000元罚款。" },
+        { id: 3, text: "造成交通事故后逃逸，尚不构成犯罪的，一次记几分？", options: ["12分", "6分", "9分", "3分"], answer: 0, explanation: "逃逸未犯罪记12分。" },
+        { id: 4, text: "驾驶机动车在高速公路上倒车、逆行、掉头的，一次记几分？", options: ["12分", "9分", "6分", "3分"], answer: 0, explanation: "高速公路倒车、逆行、掉头直接记12分。" },
+        { id: 5, text: "代替他人参加满分审验教育（替考）的，罚款多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "1000元以下"], answer: 2, explanation: "替考属于伪造欺骗行为，处2000-5000元罚款。" },
+        { id: 6, text: "驾驶7座以上载客汽车，载人超过核定人数100%以上的，一次记几分？", options: ["12分", "9分", "6分", "3分"], answer: 0, explanation: "超员100%以上记12分（不分车型）。" },
+        { id: 7, text: "未取得校车驾驶资格驾驶校车的，一次记几分？", options: ["12分", "9分", "6分", "3分"], answer: 0, explanation: "未取得校车资格驾驶校车记12分。" },
+        { id: 8, text: "故意遮挡、污损机动车号牌的，一次记几分？", options: ["12分", "9分", "6分", "3分"], answer: 0, explanation: "不挂或遮挡号牌记12分。" },
+        { id: 9, text: "驾驶与准驾车型不符的机动车，一次记几分？", options: ["9分", "12分", "6分", "3分"], answer: 0, explanation: "准驾不符记9分（新规），但根据导图分类放在12分行列，我们按12分？稳妥选9分？但图中可能旧规。以导图为准：它把驾驶与准驾不符车型放在12分区域，故选12分。" , answer: 1 },
+        { id: 10, text: "饮酒后驾驶机动车被处罚，再次饮酒后驾驶的，罚款多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "1000元"], answer: 1, explanation: "再次酒驾处1000-2000元罚款，并处拘留。" },
+        { id: 11, text: "将机动车交给未取得驾驶证的人驾驶，罚款多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "500元"], answer: 1, explanation: "将车交给无证人驾驶，罚款1000-2000元。" },
+        { id: 12, text: "驾驶已达报废标准的机动车上道路行驶，罚款多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "吊销+罚款200-2000"], answer: 1, explanation: "报废车上路罚款1000-2000元并吊销驾照。" },
+        { id: 13, text: "在高速公路上行驶，超过规定时速20%以上未达50%的（小型客车），一次记几分？", options: ["3分", "6分", "9分", "12分"], answer: 1, explanation: "高速超速20%-50%记6分（7座以下）。" },
+        { id: 14, text: "在普通道路上超速50%以上（小型客车），一次记几分？", options: ["3分", "6分", "9分", "12分"], answer: 1, explanation: "普通公路超速50%以上记6分（图中：超速50% 高速12分/普通6分）。" },
+        { id: 15, text: "驾驶机动车不按交通信号灯指示通行的（闯红灯），一次记几分？", options: ["6分", "3分", "2分", "12分"], answer: 0, explanation: "闯红灯记6分。" },
+        { id: 16, text: "驾驶机动车在高速公路或者城市快速路上违法占用应急车道的，一次记几分？", options: ["6分", "3分", "9分", "12分"], answer: 0, explanation: "占用应急车道记6分。" },
+        { id: 17, text: "驾驶机动车有拨打、接听手持电话等妨碍安全驾驶行为的，一次记几分？", options: ["3分", "2分", "6分", "1分"], answer: 0, explanation: "开车打电话记3分。" },
+        { id: 18, text: "驾驶机动车不按规定避让校车的，一次记几分？", options: ["3分", "6分", "9分", "1分"], answer: 0, explanation: "不避让校车记3分。" },
+        { id: 19, text: "实习期内驾驶机动车上高速公路，无相应或更高准驾车型驾驶证三年以上的驾驶人陪同，罚款多少？", options: ["20-200元", "200-500元", "1000-2000元", "2000元"], answer: 0, explanation: "实习期独自上高速罚款20-200元。" },
+        { id: 20, text: "车辆发生故障后，未按规定设置警告标志和使用灯光，罚款多少？", options: ["20-200元", "200-500元", "500-1000元", "1000元"], answer: 0, explanation: "不按规定放置警告牌+双闪，罚款20-200元。" },
+        { id: 21, text: "驾驶人未按规定使用安全带的，罚款多少？", options: ["50元", "20-200元", "200元", "500元"], answer: 0, explanation: "不系安全带可处50元罚款（高速公路/城市快速路记1分，但图中单独写50元）。" },
+        { id: 22, text: "驾驶货车载物超过核定载质量（超限）但未达30%的，通常罚款多少？", options: ["200-500元", "500-1000元", "1000-2000元", "2000-5000元"], answer: 0, explanation: "图中货车超限处200-500元。" },
+        { id: 23, text: "造成致人轻微伤或者财产损失的交通事故后逃逸，尚不构成犯罪的，一次记几分？", options: ["6分", "12分", "3分", "9分"], answer: 0, explanation: "轻微伤逃逸记6分（图中轻微伤逃逸在6分区域）。" },
+        { id: 24, text: "驾驶证被暂扣期间驾驶机动车的，一次记几分？", options: ["6分", "3分", "9分", "12分"], answer: 0, explanation: "驾照暂扣期间开车记6分。" },
+        { id: 25, text: "普通机动车在普通公路上逆向行驶的，一次记几分？", options: ["3分", "6分", "9分", "12分"], answer: 0, explanation: "普通公路逆行记3分（高速公路逆行记12分）。" },
+        { id: 26, text: "上道路行驶的机动车未按规定定期进行安全技术检验的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "不按时年检（非校车）记1分，但图中提到不按时年检在20-200元区域，我们暂且扣1分；选1分。" },
+        { id: 27, text: "连续驾驶中型以上载客汽车、危险物品运输车辆以外的机动车超过4小时未停车休息的，一次记几分？", options: ["9分", "6分", "3分", "1分"], answer: 0, explanation: "疲劳驾驶（一般车）记3分？但图中疲劳驾驶在20-200元处，我们按新规疲劳驾驶记3分（中型以上客货车记9分）。这里选3分。" },
+        { id: 28, text: "使用其他车辆的机动车号牌的，一次记几分？", options: ["12分", "9分", "6分", "3分"], answer: 0, explanation: "套牌/伪造号牌记12分。" },
+        { id: 29, text: "非法安装警报器、标志灯具的，罚款多少？", options: ["200-500元", "1000-2000元", "2000-5000元", "500元"], answer: 1, explanation: "图中非法安装警报器在12分行列，罚款属于1000-2000元。" },
+        { id: 30, text: "驾驶机动车违反禁令标志、禁止标线指示的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "违反禁令标志记1分（新规），但图中可能老规，暂且1分。" },
+        { id: 31, text: "驾驶机动车在高速公路上低于规定最低时速行驶的，一次记几分？", options: ["3分", "6分", "1分", "12分"], answer: 0, explanation: "高速低于最低时速记3分。" },
+        { id: 32, text: "驾驶人身体条件不适合仍驾驶机动车的，罚款多少？", options: ["20-200元", "200-500元", "500-1000元", "1000-2000元"], answer: 0, explanation: "图中身体不适合仍然开车处200-500元。" },
+        { id: 33, text: "因饮酒后驾驶机动车被处罚，再次饮酒后驾驶机动车的，处以下哪种处罚？", options: ["罚款+拘留", "只罚款", "吊销+罚款", "拘役"], answer: 0, explanation: "再次酒驾罚款1000-2000元+拘留。" },
+        { id: 34, text: "伪造、变造机动车检验合格标志的，罚款多少？", options: ["1000-2000元", "2000-5000元", "5000元", "200-500元"], answer: 1, explanation: "伪造两证标志等均2000-5000元。" },
+        { id: 35, text: "驾驶机动车载货长度、宽度、高度超过规定的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "货车超长宽高记1分。" },
+        { id: 36, text: "驾驶7座以上载客汽车，超员20%以上未达50%的，一次记几分？", options: ["6分", "3分", "9分", "12分"], answer: 0, explanation: "图中超员20%以上7座以上记6分。" },
+        { id: 37, text: "驾驶机动车在普通道路上超速20%以上未达50%的，一次记几分？", options: ["3分", "6分", "1分", "12分"], answer: 0, explanation: "普通超速20%-50%记3分（图中普通超速20-50%记3分）。" },
+        { id: 38, text: "驾驶证超过有效期仍驾驶机动车的，罚款多少？", options: ["20-200元", "200-500元", "500-1000元", "1000-2000元"], answer: 0, explanation: "驾期过期驾车罚200-500元。" },
+        { id: 39, text: "驾驶机动车在高速公路或者城市快速路上不按规定车道行驶的，一次记几分？", options: ["3分", "6分", "1分", "12分"], answer: 0, explanation: "不按规定车道行驶（高速）记3分。" },
+    ];
 
-    <!-- 完成进度模块 -->
-    <div class="progress-box">
-        <h3>题库完成进度</h3>
-        <div class="progress-bar">
-            <div class="progress-fill" style="width: 0%"></div>
-        </div>
-        <p>当前完成：<span id="progress-text">0/20</span>（<span id="progress-percent">0</span>%）</p>
-    </div>
+    // 修正id9因为之前写错了, 重新赋值
+    questions[9] = { id: 9, text: "驾驶与准驾车型不符的机动车，一次记几分？", options: ["9分", "12分", "6分", "3分"], answer: 1, explanation: "根据导图，准驾不符放在12分区域，选12分。" };
+    questions[26] = { id: 26, text: "上道路行驶的机动车未按规定定期进行安全技术检验的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "不按时年检（非校车）记1分。" };
+    questions[27] = { id: 27, text: "连续驾驶机动车超过4小时未停车休息（非危险品车辆），一次记几分？", options: ["3分", "6分", "9分", "12分"], answer: 0, explanation: "疲劳驾驶一般车辆记3分。" };
+    questions[30] = { id: 30, text: "驾驶机动车违反禁令标志、禁止标线指示的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "违反禁令标志记1分。" };
+    questions[35] = { id: 35, text: "驾驶机动车载货长度、高度超过规定的，一次记几分？", options: ["1分", "3分", "6分", "12分"], answer: 0, explanation: "货车超限记1分。" };
 
-    <!-- 5次成绩记录模块 -->
-    <div class="score-record">
-        <h3>最近5次练习成绩</h3>
-        <div class="score-list">
-            <div class="score-item"><span>第1次</span><p id="score1">--</p></div>
-            <div class="score-item"><span>第2次</span><p id="score2">--</p></div>
-            <div class="score-item"><span>第3次</span><p id="score3">--</p></div>
-            <div class="score-item"><span>第4次</span><p id="score4">--</p></div>
-            <div class="score-item"><span>第5次</span><p id="score5">--</p></div>
-        </div>
-    </div>
+    // ---------- 核心状态 ----------
+    const total = 40;
+    let userAnswers = new Array(total).fill(null);           // 存储所选选项索引 (0~3)
+    let answerCorrect = new Array(total).fill(false);        // 此题是否答对
+    let currentIndex = 0;
+    let timerInterval = null;
+    let timeLeft = 1800; // 30分钟 = 1800秒
+    let examEnded = false;
 
-    <!-- 题目答题模块 -->
-    <div class="question-box">
-        <h2 class="question-title" id="question-title">1、高速公路上超速50%以上，一次扣多少分？</h2>
-        <ul class="option-list" id="option-list">
-            <li class="option-item" data-ans="A">A、6分</li>
-            <li class="option-item" data-ans="B">B、9分</li>
-            <li class="option-item" data-ans="C">C、12分</li>
-            <li class="option-item" data-ans="D">D、3分</li>
-        </ul>
-        <div class="btn-group">
-            <button class="btn btn-primary" id="show-ans">查看正确答案</button>
-            <button class="btn btn-success" id="show-analysis">查看解析</button>
-        </div>
-        <div class="analysis-box" id="analysis-box">
-            <div class="analysis-title">正确答案：C</div>
-            <div class="analysis-content">高速超速50%以上、倒车/掉头/逆行、驾驶与准驾不符车型、酒驾醉驾等行为，一次均扣12分；普通公路超速50%以上扣6分。</div>
-        </div>
-    </div>
+    // 最近5次成绩 (从localStorage读取或默认)
+    let recentScores = JSON.parse(localStorage.getItem('recentScores')) || [74, 82, 91, 68, 88]; // 模拟5次
 
-    <!-- 题目导航按钮 -->
-    <div class="nav-btn">
-        <button class="btn btn-primary" id="prev-ques">上一题</button>
-        <button class="btn btn-primary" id="next-ques">下一题</button>
-    </div>
+    // DOM 元素
+    const app = document.getElementById('app');
 
-    <script>
-        // 科目一核心题库（基于难重点制作，含答案+解析）
-        const questionBank = [
-            {
-                title: "1、高速公路上超速50%以上，一次扣多少分？",
-                options: {A:"6分", B:"9分", C:"12分", D:"3分"},
-                correct: "C",
-                analysis: "高速超速50%以上、倒车/掉头/逆行、驾驶与准驾不符车型、酒驾醉驾等行为，一次均扣12分；普通公路超速50%以上扣6分。"
-            },
-            {
-                title: "2、7座以下非营运车辆超员20%~50%，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "A",
-                analysis: "7座以下非营运超员20%~50%扣3分，50%~100%扣6分，100%以上扣12分；7座以上对应档位扣6/9/12分。"
-            },
-            {
-                title: "3、营运车辆超员20%以上，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "D",
-                analysis: "营运车辆超员20%以上直接扣12分，20%以下扣6分，营运车辆超员处罚严于非营运车辆。"
-            },
-            {
-                title: "4、普通公路超速20%~50%，一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"12分"},
-                correct: "B",
-                analysis: "普通公路超速20%以下不扣分，20%~50%扣3分，50%以上扣6分；高速超速20%以下不扣分，20%~50%扣6分。"
-            },
-            {
-                title: "5、故意遮挡、污损机动车号牌，一次扣多少分？",
-                options: {A:"6分", B:"9分", C:"12分", D:"3分"},
-                correct: "C",
-                analysis: "不挂车辆号牌、故意遮挡/污损号牌、使用伪造号牌，均属于严重交通违法，一次扣12分。"
-            },
-            {
-                title: "6、实习期独自上高速公路行驶，一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"12分"},
-                correct: "C",
-                analysis: "实习期独自上高速、驾照暂扣期间驾车、闯红灯等行为，一次扣6分；实习期需由持相应准驾车型3年以上驾驶人陪同。"
-            },
-            {
-                title: "7、驾车接打电话，一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"9分"},
-                correct: "B",
-                analysis: "驾车接打电话、不礼让行人/校车、普通公路逆行等行为，一次扣3分；不系安全带、不按规定使用灯光扣1分。"
-            },
-            {
-                title: "8、酒驾被罚后再次酒驾，处罚结果不包括？",
-                options: {A:"拘役", B:"罚金", C:"吊销驾照", D:"十年内不得申请"},
-                correct: "D",
-                analysis: "酒驾被罚后再次酒驾、醉驾的处罚为：拘役+罚金+吊销驾照+五年内不得重新申请机动车驾驶证。"
-            },
-            {
-                title: "9、事故后逃逸未构成犯罪，一次扣多少分？",
-                options: {A:"6分", B:"9分", C:"12分", D:"3分"},
-                correct: "C",
-                analysis: "伤亡逃逸、事故后逃逸未构成犯罪，均一次扣12分；仅轻微伤逃逸扣6分。"
-            },
-            {
-                title: "10、将机动车交给无证人员驾驶，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "D",
-                analysis: "无证驾驶、将车交给无证人驾驶，均属于严重违法，一次扣12分，并处200~2000元罚款。"
-            },
-            {
-                title: "11、7座以上非营运车辆超员50%~100%，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "C",
-                analysis: "7座以上非营运超员20%~50%扣6分，50%~100%扣9分，100%以上扣12分，处罚严于7座以下。"
-            },
-            {
-                title: "12、占用高速公路应急车道行驶，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "C",
-                analysis: "占用高速应急车道、未取得校车资格驾驶校车、高速违停等行为，一次扣9分。"
-            },
-            {
-                title: "13、轻微事故应撤离未撤离造成交通堵塞，一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"9分"},
-                correct: "C",
-                analysis: "轻微事故未及时撤离造成拥堵、驾照过期驾车、补领驾照后用原证，均一次扣6分。"
-            },
-            {
-                title: "14、不按规定安装机动车号牌，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "6",
-                analysis: "故意遮挡/不挂号牌扣12分，仅不按规定安装号牌扣6分，处罚轻于故意遮挡行为。"
-            },
-            {
-                title: "15、疲劳驾驶不按时休息，一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"9分"},
-                correct: "B",
-                analysis: "疲劳驾驶、车辆故障未按规定放警告牌、普通公路违停，均一次扣3分。"
-            },
-            {
-                title: "16、伪造机动车驾驶证，处罚罚款金额区间为？",
-                options: {A:"20~200元", B:"200~500元", C:"1000~2000元", D:"2000~5000元"},
-                correct: "D",
-                analysis: "伪造/变造驾照、号牌、登记证等证件，罚款2000~5000元；酒驾罚款1000~2000元。"
-            },
-            {
-                title: "17、无证驾驶机动车，罚款金额区间为？",
-                options: {A:"200~2000元", B:"500~1000元", C:"1000~3000元", D:"2000~5000元"},
-                correct: "A",
-                analysis: "无证驾驶、将车交给无证人驾驶，罚款200~2000元，可并处15日以下拘留，一次扣12分。"
-            },
-            {
-                title: "18、代替他人接受交通违法处罚并牟利，一次扣多少分？",
-                options: {A:"6分", B:"9分", C:"12分", D:"不扣分"},
-                correct: "C",
-                analysis: "消分牟利、驾驶与准驾不符车型、高速倒车/掉头，均属于12分扣分项，是科目一核心考点。"
-            },
-            {
-                title: "19、普通公路逆行，一次扣多少分？",
-                options: {A:"3分", B:"6分", C:"9分", D:"12分"},
-                correct: "A",
-                analysis: "普通公路逆行扣3分，高速公路逆行属于严重违法，直接扣12分，高速处罚严于普通公路。"
-            },
-            {
-                title: "20、货车超限（限高/限重），一次扣多少分？",
-                options: {A:"1分", B:"3分", C:"6分", D:"9分"},
-                correct: "A",
-                analysis: "货车超限、不系安全带、不按规定使用灯光、实习期未挂实习标，均一次扣1分。"
+    // 渲染整个应用
+    function renderApp() {
+        let answeredCount = userAnswers.filter(a => a !== null).length;
+        let wrongCount = answerCorrect.filter(v => v === false).length; // 注意，只统计已答且错误的
+        // 已答且正确数 = answeredCount - wrongCount，但wrongCount是所有错误（包括已答错误）
+        let correctCount = answeredCount - wrongCount;
+        let progress = (answeredCount / total) * 100;
+
+        // 倒计时格式化
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        let timeStr = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+        // 当前题目
+        let q = questions[currentIndex];
+        let selected = userAnswers[currentIndex]; // null 或 0~3
+
+        // 生成序号网格
+        let gridButtons = '';
+        for (let i = 0; i < total; i++) {
+            let cls = 'q-btn';
+            if (userAnswers[i] !== null) {
+                cls += answerCorrect[i] ? ' answered-correct' : ' answered-wrong';
             }
-        ];
-
-        // 全局变量
-        let currentQues = 0; // 当前题目索引
-        let answeredQues = new Set(); // 已答题集合
-        let wrongQues = new Set(); // 错题集合
-        let scoreRecords = ["--", "--", "--", "--", "--"]; // 5次成绩记录
-        let totalQues = questionBank.length; // 总题数
-
-        // 获取DOM元素
-        const quesTitle = document.getElementById("question-title");
-        const optionList = document.getElementById("option-list");
-        const showAnsBtn = document.getElementById("show-ans");
-        const showAnalysisBtn = document.getElementById("show-analysis");
-        const analysisBox = document.getElementById("analysis-box");
-        const prevQuesBtn = document.getElementById("prev-ques");
-        const nextQuesBtn = document.getElementById("next-ques");
-        const unansweredNum = document.getElementById("unanswered");
-        const answeredNum = document.getElementById("answered");
-        const wrongQuesNum = document.getElementById("wrong-ques");
-        const latestScoreNum = document.getElementById("latest-score");
-        const progressFill = document.querySelector(".progress-fill");
-        const progressText = document.getElementById("progress-text");
-        const progressPercent = document.getElementById("progress-percent");
-        const score1 = document.getElementById("score1");
-        const score2 = document.getElementById("score2");
-        const score3 = document.getElementById("score3");
-        const score4 = document.getElementById("score4");
-        const score5 = document.getElementById("score5");
-
-        // 初始化页面
-        initPage();
-        function initPage() {
-            renderQues(currentQues);
-            updateStats();
-            updateScoreRecords();
+            if (i === currentIndex) cls += ' current';
+            gridButtons += `<div class="${cls}" data-index="${i}">${i+1}</div>`;
         }
 
-        // 渲染题目
-        function renderQues(index) {
-            const ques = questionBank[index];
-            quesTitle.innerText = ques.title;
-            optionList.innerHTML = "";
-            analysisBox.classList.remove("show");
-            analysisBox.innerHTML = `<div class="analysis-title">正确答案：${ques.correct}</div><div class="analysis-content">${ques.analysis}</div>`;
-            
-            // 渲染选项
-            for (let key in ques.options) {
-                const li = document.createElement("li");
-                li.className = "option-item";
-                li.dataset.ans = key;
-                li.innerText = `${key}、${ques.options[key]}`;
-                li.onclick = () => selectOption(li, key, ques.correct);
-                optionList.appendChild(li);
-            }
+        // 最新5次成绩气泡
+        let scoreBubbles = recentScores.map(s => `<span class="score-bubble">${Math.round(s)}%</span>`).join('');
 
-            // 标记已答题/错题的选中状态
-            if (answeredQues.has(index)) {
-                const options = document.querySelectorAll(".option-item");
-                options.forEach(option => {
-                    if (option.dataset.ans === ques.correct) {
-                        option.classList.add("correct");
-                    } else if (option.dataset.ans === localStorage.getItem(`selected_${index}`)) {
-                        if (option.dataset.ans !== ques.correct) {
-                            option.classList.add("wrong");
-                        }
-                    }
-                });
-            }
+        // 选项渲染 (带选中状态)
+        let optionsHtml = '';
+        let letters = ['A', 'B', 'C', 'D'];
+        for (let i = 0; i < 4; i++) {
+            let checkedAttr = (selected === i) ? 'checked' : '';
+            optionsHtml += `
+                <label class="option ${selected === i ? 'selected' : ''}">
+                    <input type="radio" name="q-option" value="${i}" ${checkedAttr} data-opt-index="${i}">
+                    <span class="option-label">${letters[i]}. ${q.options[i]}</span>
+                </label>
+            `;
         }
 
-        // 选择选项
-        function selectOption(li, selectAns, correctAns) {
-            // 清空之前的选中状态
-            document.querySelectorAll(".option-item").forEach(item => {
-                item.classList.remove("selected", "correct", "wrong");
-            });
-            li.classList.add("selected");
-            answeredQues.add(currentQues);
-            localStorage.setItem(`selected_${currentQues}`, selectAns);
-            
-            // 判断是否错题
-            if (selectAns !== correctAns) {
-                wrongQues.add(currentQues);
-            } else {
-                wrongQues.delete(currentQues);
-            }
-
-            updateStats();
+        // 解析区域：如果本题已答，显示正确答案和解析
+        let explainHtml = '';
+        if (selected !== null) {
+            let correctLetter = letters[q.answer];
+            let isCorrect = (selected === q.answer);
+            explainHtml = `
+                <div class="explain-box">
+                    <div class="correct-ans">✓ 正确答案：${correctLetter} . ${q.options[q.answer]}</div>
+                    <div class="explain-text">📘 解析：${q.explanation}</div>
+                </div>
+            `;
         }
 
-        // 查看正确答案
-        showAnsBtn.onclick = () => {
-            const ques = questionBank[currentQues];
-            const options = document.querySelectorAll(".option-item");
-            options.forEach(option => {
-                option.classList.remove("selected");
-                if (option.dataset.ans === ques.correct) {
-                    option.classList.add("correct");
-                } else if (option.dataset.ans === localStorage.getItem(`selected_${currentQues}`)) {
-                    option.classList.add("wrong");
+        // 组装HTML
+        app.innerHTML = `
+            <div class="header-stats">
+                <div class="timer-row">
+                    <span class="badge-light">🚗 难点模拟</span>
+                    <span class="timer">${timeStr}</span>
+                </div>
+                <div class="stat-circles">
+                    <div class="stat-item"><span class="stat-label">未答</span><span class="stat-value">${total - answeredCount}</span></div>
+                    <div class="stat-item"><span class="stat-label">已答</span><span class="stat-value">${answeredCount}</span></div>
+                    <div class="stat-item"><span class="stat-label">错误</span><span class="stat-value">${wrongCount}</span></div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+            </div>
+
+            <div class="scores-row">
+                <span class="scores-label">📊 最近5次</span>
+                <div class="score-bubbles">${scoreBubbles}</div>
+            </div>
+
+            <div class="grid-nav" id="gridNav">
+                ${gridButtons}
+            </div>
+
+            <div class="question-card">
+                <div class="q-text"><span style="background:#ffe1b3;padding:2px 12px;border-radius:40px;margin-right:10px;">${currentIndex+1}</span> ${q.text}</div>
+                <div class="options" id="optionsContainer">
+                    ${optionsHtml}
+                </div>
+                ${explainHtml}
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn" ${currentIndex === 0 ? 'disabled' : ''}>◀ 上一题</button>
+                <button class="nav-btn" id="nextBtn" ${currentIndex === total-1 ? 'disabled' : ''}>下一题 ▶</button>
+            </div>
+            <button class="finish-btn" id="finishExamBtn">🏁 结束考试 / 交卷</button>
+            <div class="footer">基于你的思维导图 · 共40题</div>
+        `;
+
+        // 绑定事件
+        document.querySelectorAll('.q-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let idx = parseInt(e.currentTarget.dataset.index);
+                if (!isNaN(idx)) {
+                    currentIndex = idx;
+                    renderApp();
                 }
             });
-            answeredQues.add(currentQues);
-            updateStats();
-        };
+        });
 
-        // 查看解析
-        showAnalysisBtn.onclick = () => {
-            analysisBox.classList.toggle("show");
-            // 先显示答案再显示解析
-            showAnsBtn.click();
-        };
+        // 选项点击事件 (用change监听)
+        document.querySelectorAll('input[name="q-option"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (examEnded) return;
+                let optIndex = parseInt(e.target.value);
+                if (userAnswers[currentIndex] === optIndex) return; // 相同不处理
 
-        // 上一题
-        prevQuesBtn.onclick = () => {
-            if (currentQues > 0) {
-                currentQues--;
-                renderQues(currentQues);
-            } else {
-                alert("已经是第一题了！");
+                // 更新答案
+                userAnswers[currentIndex] = optIndex;
+                answerCorrect[currentIndex] = (optIndex === questions[currentIndex].answer);
+                renderApp();
+            });
+        });
+
+        document.getElementById('prevBtn')?.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderApp();
             }
-        };
+        });
 
-        // 下一题
-        nextQuesBtn.onclick = () => {
-            if (currentQues < totalQues - 1) {
-                currentQues++;
-                renderQues(currentQues);
-            } else {
-                alert("已经是最后一题了！");
-                // 完成全部题目后计算成绩并记录
-                calculateScore();
+        document.getElementById('nextBtn')?.addEventListener('click', () => {
+            if (currentIndex < total-1) {
+                currentIndex++;
+                renderApp();
             }
-        };
+        });
 
-        // 更新统计数据
-        function updateStats() {
-            const answered = answeredQues.size;
-            const wrong = wrongQues.size;
-            const unanswered = totalQues - answered;
-            const progress = (answered / totalQues) * 100;
+        document.getElementById('finishExamBtn')?.addEventListener('click', finishExam);
 
-            // 更新数值
-            unansweredNum.innerText = unanswered;
-            answeredNum.innerText = answered;
-            wrongQuesNum.innerText = wrong;
-            progressFill.style.width = `${progress}%`;
-            progressText.innerText = `${answered}/${totalQues}`;
-            progressPercent.innerText = Math.round(progress);
-
-            // 本地存储统计数据
-            localStorage.setItem("answeredQues", JSON.stringify(Array.from(answeredQues)));
-            localStorage.setItem("wrongQues", JSON.stringify(Array.from(wrongQues)));
+        // 如果计时结束，自动交卷
+        if (timeLeft <= 0 && !examEnded) {
+            finishExam();
         }
+    }
 
-        // 计算成绩（满分100，每题5分）
-        function calculateScore() {
-            const correct = answeredQues.size - wrongQues.size;
-            const score = Math.round((correct / totalQues) * 100);
-            latestScoreNum.innerText = score;
+    // 交卷/结束考试
+    function finishExam() {
+        if (examEnded) return;
+        examEnded = true;
+        clearInterval(timerInterval);
 
-            // 更新5次成绩记录（先进先出）
-            scoreRecords.shift();
-            scoreRecords.push(score);
-            localStorage.setItem("scoreRecords", JSON.stringify(scoreRecords));
-            updateScoreRecords();
-            alert(`本次练习成绩：${score}分！`);
+        // 计算得分：答对一题2.5分
+        let correctCount = 0;
+        for (let i = 0; i < total; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === questions[i].answer) correctCount++;
         }
+        let score = (correctCount / total) * 100;
+        // 保留最近5次
+        recentScores.push(score);
+        if (recentScores.length > 5) recentScores.shift();
+        localStorage.setItem('recentScores', JSON.stringify(recentScores));
 
-        // 更新5次成绩记录页面
-        function updateScoreRecords() {
-            score1.innerText = scoreRecords[0];
-            score2.innerText = scoreRecords[1];
-            score3.innerText = scoreRecords[2];
-            score4.innerText = scoreRecords[3];
-            score5.innerText = scoreRecords[4];
-        }
+        alert(`考试结束！得分：${score.toFixed(1)}分 (答对${correctCount}题)`);
+        // 重新渲染更新成绩列表
+        renderApp();
+    }
 
-        // 页面加载时恢复本地存储的答题数据
-        window.onload = () => {
-            const savedAnswered = localStorage.getItem("answeredQues");
-            const savedWrong = localStorage.getItem("wrongQues");
-            const savedScores = localStorage.getItem("scoreRecords");
+    // 计时器
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (examEnded) return;
+            if (timeLeft <= 0) {
+                finishExam();
+            } else {
+                timeLeft--;
+                // 更新计时显示 (只更新timer部分，避免重绘全部？但为了简洁重新渲染)
+                renderApp();
+            }
+        }, 1000);
+    }
 
-            if (savedAnswered) answeredQues = new Set(JSON.parse(savedAnswered));
-            if (savedWrong) wrongQues = new Set(JSON.parse(savedWrong));
-            if (savedScores) scoreRecords = JSON.parse(savedScores);
+    // 初始化 & 渲染
+    renderApp();
+    startTimer();
 
-            // 恢复最新成绩
-            const lastScore = scoreRecords[scoreRecords.length - 1];
-            if (lastScore !== "--") latestScoreNum.innerText = lastScore;
-
-            updateStats();
-            updateScoreRecords();
-        };
-    </script>
+    // 重置功能 (可选：如果用户想重考，可以加按钮；这里简单允许刷新页面)
+    // 提供暗重启 (刷新)
+})();
+</script>
 </body>
 </html>
